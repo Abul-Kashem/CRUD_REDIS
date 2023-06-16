@@ -1,69 +1,69 @@
 import Employee from "../Model/empSchema.js";
 
-export const getAllEmployee = async (req, res) => {
+// Get all employees
+export const getAllEmployees = async (req, res) => {
+
     try {
+        const emp = await Employee.find();
 
-        const employees = await Employee.find({});
-        if (employees.length == 0) {
-            return res.status(200).json({ message: "Employee not found." });
-        }
-        return res.status(200).json(employees);
-
+        res.status(200).json(emp);
+    } catch (error) {
+        res.status(404).json({ message: error.message })
     }
-    catch (error) {
-        return res.status(500).json({ message: "Internal error" });
+
+
+}
+
+// Save data of the employee in database
+
+export const addEmployee = async (request, response) => {
+    const employee = request.body;
+
+    const newEmployee = new Employee(employee);
+    try {
+        await newEmployee.save();
+        response.status(201).json(newEmployee);
+    } catch (error) {
+        response.status(409).json({ message: error.message });
     }
 }
 
-export const addEmployee = async (req, res) => {
+// Get a employee by id
 
-    const newEmp = await Employee.findOne({ email: req.body.email });
-    // console.log(req.body);
-
+export const getEmployeeById = async (req, res) => {
     try {
-        if (!newEmp) {
-            const employee = Employee(req.body)
-            await employee.save();
-            return res.status(201).json({ message: "Employee Added" });
-        }
-        return res.status(400).json({ message: "Employee already exist" });
+        const employee = await Employee.findById(req.params.id);
+        res.status(200).json(employee);
+    } catch (error) {
+        res.status(404).json({ message: error.message })
     }
 
-    catch (error) {
-        return res.status(500).json({ message: `Internal error ${error}` });
-    }
 }
 
-export const updateEmployee = async (req, res) => {
+export const editEmployee = async (req, res) => {
     // console.log(req.params.id)
+    let employee = req.body;
 
-    const update = Object.keys(req.body);
-    const allowedActions = ["name", "email", "phone", "designation"];
-
-    const isAllowed = update.every((key) => {
-        return allowedActions.includes(key);
-    });
-    if (!isAllowed) {
-        return res.status(400).json({ message: "Invalid update" });
-    }
-
+    const editEmployee = new Employee(employee);
+    // console.log(editEmployee)
     try {
+        // await Employee.updateOne({ _id: request.params.id }, editEmployee);
+        // res.status(201).json(editEmployee);
 
         const updateEmp = await Employee.findByIdAndUpdate(req.params.id, {
             ...req.body,
         });
-        if (!updateEmp) {
-            return res.status(400).json({ message: "Employee not found" });
-        }
         await updateEmp.save();
+        res.status(201).json(editEmployee);
 
-        return res.status(200).json(req.body);
-    }
-    catch (err) {
-        return res.status(500).json({ message: `Internal error ${error}` });
+
+    } catch (error) {
+        res.status(409).json({ message: error.message });
     }
 
 }
+
+
 
 export const deleteEmployee = async (req, res) => {
     try {

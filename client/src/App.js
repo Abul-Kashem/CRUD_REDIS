@@ -1,33 +1,25 @@
-import './App.css';
-import { RouterProvider, createBrowserRouter } from 'react-router-dom'
+// import './App.css';
+import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import Home from './components/Home';
 import AddEmployee from './components/AddEmployee';
-import Update from './components/Update';
+import NavBar from './components/NavBar';
+import EditEmployee from './components/EditEmployee';
+import NotFound from './components/NotFound';
+
 
 function App() {
 
-  const router = createBrowserRouter([
-    {
-      path: '/',
-      element: <Home></Home>,
-      loader: () => fetch('http://localhost:5000/getAllEmp')
-    },
-    {
-      path: '/addEmp',
-      element: <AddEmployee></AddEmployee>
-    },
-    {
-      path: '/update/:id',
-      element: <Update></Update>,
-      loader: ({ params }) => fetch(`http://localhost:5000/update/${params.id}`)
-    }
-  ])
-
-
   return (
     <div className="App">
-
-      <RouterProvider router={router}></RouterProvider>
+      <BrowserRouter>
+        <NavBar />
+        <Routes>
+          <Route path="all" element={<Home />} />
+          <Route path='/add' element={<AddEmployee />} />
+          <Route path='/edit/:id' element={<EditEmployee />} />
+          <Route path='/*' element={<NotFound />} />
+        </Routes>
+      </BrowserRouter>
 
     </div>
   );

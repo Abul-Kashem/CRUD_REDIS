@@ -8,4 +8,4 @@ const Update = () => {
     );
 };
 
-export default Update;
+export default Update; 
